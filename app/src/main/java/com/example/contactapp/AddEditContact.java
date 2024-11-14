@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+
 import com.canhub.cropper.CropImageView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.canhub.cropper.CropImage;
@@ -110,17 +111,12 @@ public class AddEditContact extends AppCompatActivity {
             updatedTime = intent.getStringExtra("UPDATEDTIME");
 
             // Get image URI string from intent
-            image = intent.getStringExtra("IMAGE");
+            image = intent.getStringExtra("IMAGE_URI");
 
-            // Check permission for reading external storage
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                loadImage();
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_PERMISSION_CODE);
-            }
+
+                // Default image if no image is available
+                profileIv.setImageResource(R.drawable.ic_baseline_person_24);
+
 
             // Set values in editText fields
             nameEt.setText(name);
@@ -316,8 +312,15 @@ public class AddEditContact extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "No image selected", Toast.LENGTH_SHORT).show();
                 }
             }
+
+            // After successfully saving data, send an SMS
+            String message = "Your reclaim is successfully sent !"; // Customize your message here
+            TwilioService.sendSms(phone, message);
+            // Go back to the previous screen or handle post-save behavior
+            finish(); // Or any other navigation you'd prefer after saving
         }
     }
+
 
     // Method to validate phone number (simple regex for example)
     private boolean isValidPhoneNumber(String phone) {

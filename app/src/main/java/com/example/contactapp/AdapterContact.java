@@ -44,6 +44,7 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
         return vh;
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         ModelContact modelContact = contactList.get(position);
@@ -58,7 +59,6 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
         String addedTime = modelContact.getAddedTime();
         String updatedTime = modelContact.getUpdatedTime();
 
-
         // Set data in view
         holder.contactName.setText(name);
 
@@ -72,7 +72,13 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
                     .into(holder.contactImage);
         }
 
-        // Handle editBtn click
+        // Handle row click to navigate to ContactDetails
+        holder.relativeLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ContactDetails.class);
+            intent.putExtra("contactId", id);  // Pass the contact ID to the ContactDetails activity
+            context.startActivity(intent);
+        });
+
         // Handle editBtn click
         holder.contactEdit.setOnClickListener(v -> {
             Intent intent = new Intent(context, AddEditContact.class);
@@ -85,27 +91,20 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
             intent.putExtra("UPDATEDTIME", updatedTime);
             intent.putExtra("isEditMode", true);
 
-            if (image != null && !image.isEmpty()) {
-                Uri imageUri = Uri.parse(image);
-                intent.putExtra("IMAGE_URI", imageUri.toString());
 
-                // Add permission flags to the Intent
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-                // Grant permission for the Uri before passing it to the new activity
-                context.getContentResolver().takePersistableUriPermission(imageUri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            }
+                // Set a default image if needed or handle the case where image is null
+                intent.putExtra("IMAGE_URI", ""); // or omit this line if no default is needed
+
+
 
             context.startActivity(intent);
         });
 
-
         // Handle delete click
         holder.contactDelete.setOnClickListener(v -> {
             // Remove the item from the list
-            contactList.remove(position);  // Use position directly here
+            contactList.remove(position);
             dbHelper.deleteContact(id);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, contactList.size());
@@ -114,6 +113,7 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
             Toast.makeText(context, "Contact deleted", Toast.LENGTH_SHORT).show();
         });
     }
+
 
 
     @Override

@@ -28,6 +28,10 @@ android {
 }
 
 dependencies {
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.github.hihi-dev:twiliosms:0.1.1'
     implementation 'com.github.bumptech.glide:glide:4.13.2'  // Use the latest version
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
     implementation 'androidx.appcompat:appcompat:1.4.0'
